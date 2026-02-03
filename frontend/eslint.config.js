@@ -3,8 +3,10 @@ import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
+import stylistic from '@stylistic/eslint-plugin'
 
 export default defineConfig([
+  stylistic.configs.recommended,
   globalIgnores(['dist', 'build', 'node_modules']),
   {
     files: ['**/*.{js,jsx}'],

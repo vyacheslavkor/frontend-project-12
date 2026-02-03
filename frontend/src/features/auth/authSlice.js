@@ -2,24 +2,25 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialUser = {
   token: '',
-  username: ''
+  username: '',
 }
 const getStoredUser = () => {
   try {
     const stored = localStorage.getItem('user')
     return stored ? JSON.parse(stored) : initialUser
-  } catch (err) {
+  }
+  catch (err) {
     console.warn('Невалидные данные в localStorage по ключу "user":', err)
     localStorage.removeItem('user')
     return initialUser
   }
 }
 
-const user = getStoredUser();
+const user = getStoredUser()
 
 const initialState = {
   token: user.token,
-  username: user.username
+  username: user.username,
 }
 
 const authSlice = createSlice({
@@ -35,10 +36,10 @@ const authSlice = createSlice({
     logout: (state) => {
       state.token = ''
       state.username = ''
-      localStorage.removeItem('user');
+      localStorage.removeItem('user')
     },
   },
 })
 
-export const { setCredentials, logout } = authSlice.actions;
-export default authSlice.reducer;
+export const { setCredentials, logout } = authSlice.actions
+export default authSlice.reducer
