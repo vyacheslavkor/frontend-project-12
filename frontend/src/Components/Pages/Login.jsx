@@ -1,11 +1,12 @@
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import avatar from '../../assets/avatar.jpg'
-import { Field, Form, Formik } from 'formik'
+import { ErrorMessage, Field, Form, Formik } from 'formik'
 import axios from 'axios'
 import routes from '../../constants/routes.js'
 import { setCredentials } from '../../features/auth/authSlice.js'
 import cn from 'classnames'
+import { Button } from 'react-bootstrap'
 
 const Login = () => {
   const dispatch = useDispatch()
@@ -32,12 +33,10 @@ const Login = () => {
 
                   const tryLogin = async () => {
                     try {
-                      console.log(username, password)
                       const response = await axios.post(routes.login(), {
                         username, password,
                       })
 
-                      console.log('resp')
                       dispatch(setCredentials({ token: response.data.token, username: response.data.username }))
 
                       navigate('/')
@@ -72,23 +71,26 @@ const Login = () => {
                         type="password"
                         id="password"
                         required={true}
-                        className={cn('form-control', { 'is-invalid': Object.hasOwn(errors, 'password') && errors.password })}
+                        className={cn('form-control', { 'is-invalid': errors.password })}
                         name="password"
                         placeholder="Пароль"
                         autoComplete="current-password"
                       />
                       <label htmlFor="password" className="form-label">Пароль</label>
-                      {Object.hasOwn(errors, 'password') && errors.password
-                        ? <div className="invalid-tooltip">{errors.password}</div>
-                        : null}
+                      <ErrorMessage
+                        component="div"
+                        name="password"
+                        className="invalid-tooltip"
+                      />
                     </div>
-                    <button
+                    <Button
                       type="submit"
                       className="w-100 mb-3 btn btn-outline-primary"
                       disabled={isSubmitting}
+                      variant={null}
                     >
                       Войти
-                    </button>
+                    </Button>
                   </Form>
                 )}
               </Formik>
