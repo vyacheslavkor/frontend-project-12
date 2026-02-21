@@ -7,10 +7,12 @@ import routes from '../../constants/routes.js'
 import { setCredentials } from '../../features/auth/authSlice.js'
 import cn from 'classnames'
 import { Button } from 'react-bootstrap'
+import { useTransition } from 'react'
 
 const Login = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { t } = useTransition()
 
   return (
     <div className="container-fluid h-100">
@@ -22,7 +24,7 @@ const Login = () => {
                 <img
                   src={avatar}
                   className="rounded-circle"
-                  alt="Войти"
+                  alt={t('buttons.login')}
                 />
               </div>
               <Formik
@@ -42,7 +44,7 @@ const Login = () => {
                       navigate('/')
                     }
                     catch {
-                      setErrors({ password: 'Неверные имя пользователя или пароль' })
+                      setErrors({ password: t('errors.wrong_username_or_password') })
                     }
                     finally {
                       setSubmitting(false)
@@ -54,17 +56,17 @@ const Login = () => {
               >
                 {({ isSubmitting, errors }) => (
                   <Form className="col-12 col-md-6 mt-3 mt-md-0">
-                    <h1 className="text-center mb-4">Войти</h1>
+                    <h1 className="text-center mb-4">{t('buttons.login')}</h1>
                     <div className="form-floating mb-3">
                       <Field
                         id="username"
-                        className={cn('form-control', { 'is-invalid': Object.hasOwn(errors, 'password') && errors.password })}
+                        className={cn('form-control', { 'is-invalid': errors.password })}
                         name="username"
                         autoComplete="username"
                         required={true}
-                        placeholder="Ваш ник"
+                        placeholder={t('fields.your_nick')}
                       />
-                      <label htmlFor="username">Ваш ник</label>
+                      <label htmlFor="username">{t('fields.your_nick')}</label>
                     </div>
                     <div className="form-floating mb-4">
                       <Field
@@ -73,10 +75,10 @@ const Login = () => {
                         required={true}
                         className={cn('form-control', { 'is-invalid': errors.password })}
                         name="password"
-                        placeholder="Пароль"
+                        placeholder={t('fields.password')}
                         autoComplete="current-password"
                       />
-                      <label htmlFor="password" className="form-label">Пароль</label>
+                      <label htmlFor="password" className="form-label">{t('fields.password')}</label>
                       <ErrorMessage
                         component="div"
                         name="password"
@@ -89,7 +91,7 @@ const Login = () => {
                       disabled={isSubmitting}
                       variant={null}
                     >
-                      Войти
+                      {t('buttons.login')}
                     </Button>
                   </Form>
                 )}
@@ -97,9 +99,9 @@ const Login = () => {
             </div>
             <div className="card-footer p-4">
               <div className="text-center">
-                <span>Нет аккаунта?</span>
+                <span>{t('have_not_account')}</span>
                 {' '}
-                <a href="/signup">Регистрация</a>
+                <a href="/signup">{t('buttons.signup')}</a>
               </div>
             </div>
           </div>

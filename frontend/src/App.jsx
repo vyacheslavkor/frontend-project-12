@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { NotFound, Login, Main } from './Components/Pages'
+import { NotFound, Login, Main, Signup } from './Components/Pages'
 import RequireAuth from './Components/RequireAuth'
 import Layout from './Components/Layout'
 
@@ -13,6 +13,7 @@ function App() {
             <Route path="/" element={<Main />} />
           </Route>
           <Route path="login" element={<Login />} />
+          <Route path="signup" element={<Signup />} />
         </Route>
       </Routes>
     </BrowserRouter>

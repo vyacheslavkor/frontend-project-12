@@ -18,6 +18,7 @@ import { io } from 'socket.io-client'
 import Modal from 'react-bootstrap/Modal'
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap'
 import * as yup from 'yup'
+import { useTranslation } from 'react-i18next'
 
 const Channel = (props) => {
   const { channel, isActive } = props
@@ -48,13 +49,14 @@ const ChannelFormModal = (props) => {
   const { show, handleClose, channelId } = props
   const dispatch = useDispatch()
   const channels = useSelector(channelSelectors.selectAll)
+  const { t } = useTranslation()
 
   const channelValidationSchema = yup.object().shape({
     name: yup.string()
-      .required('Обязательное поле')
-      .min(3, 'От 3 до 20 символов')
-      .max(20, 'От 3 до 20 символов')
-      .notOneOf(channels.map(channel => channel.name), 'Должно быть уникальным')
+      .required(t('errors.required_field'))
+      .min(3, t('errors.channel_length', { min: 3, max: 20 }))
+      .max(20, t('errors.channel_length', { min: 3, max: 20 }))
+      .notOneOf(channels.map(channel => channel.name), t('errors.channel_unique'))
       .trim(),
   })
 
@@ -63,7 +65,7 @@ const ChannelFormModal = (props) => {
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>{channelId ? 'Добавить канал' : 'Переименовать канал'}</Modal.Title>
+        <Modal.Title>{channelId ? t('add_channel') : t('rename_channel')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Formik
@@ -101,10 +103,10 @@ const ChannelFormModal = (props) => {
                   />
                   <div className="d-flex justify-content-end">
                     <Button variant="secondary" onClick={handleClose} className="me-2">
-                      Отменить
+                      {t('buttons.cancel')}
                     </Button>
                     <Button variant="primary" type="submit">
-                      Отправить
+                      {t('buttons.submit')}
                     </Button>
                   </div>
                 </div>
@@ -133,6 +135,8 @@ const RemovableChannelButton = (props) => {
   const handleRemoveShow = () => setRemoveShow(true)
   const handleRemoveClose = () => setRemoveShow(false)
 
+  const { t } = useTranslation()
+
   const handleRemove = async () => {
     await dispatch(removeChannel(channel.id))
     handleRemoveClose()
@@ -155,30 +159,24 @@ const RemovableChannelButton = (props) => {
       <Dropdown.Toggle split variant={isActive ? 'secondary' : null} id="dropdown-split-basic" />
 
       <Dropdown.Menu>
-        <Dropdown.Item onClick={handleRemoveShow}>Удалить</Dropdown.Item>
+        <Dropdown.Item onClick={handleRemoveShow}>{t('buttons.delete')}</Dropdown.Item>
         <Modal show={showRemove} onHide={handleRemoveClose} centered>
           <Modal.Header closeButton>
-            <Modal.Title>Удалить канал</Modal.Title>
+            <Modal.Title>{t('delete_channel')}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p className="lead">Уверены?</p>
+            <p className="lead">{t('sure')}</p>
             <div className="d-flex justify-content-end">
               <Button variant="secondary" onClick={handleRemoveClose} className="me-2">
-                Отменить
+                {t('buttons.cancel')}
               </Button>
               <Button variant="danger" type="button" onClick={handleRemove}>
-                Удалить
+                {t('buttons.delete')}
               </Button>
             </div>
           </Modal.Body>
         </Modal>
-        <Dropdown.Item onClick={handleShow}>Переименовать</Dropdown.Item>
-        {/* <Modal show={show} onHide={handleClose} centered> */}
-        {/*  <Modal.Header closeButton> */}
-        {/*    <Modal.Title>Переименовать канал</Modal.Title> */}
-        {/*  </Modal.Header> */}
-        {/*  <Modal.Body>TEST</Modal.Body> */}
-        {/* </Modal> */}
+        <Dropdown.Item onClick={handleShow}>{t('buttons.rename')}</Dropdown.Item>
         <ChannelFormModal show={show} onHide={handleClose} channelId={channel.id} handleClose={handleClose} />
       </Dropdown.Menu>
     </Dropdown>
@@ -254,6 +252,8 @@ const Main = () => {
   const handleShow = () => setShow(true)
   const handleClose = () => setShow(false)
 
+  const { t } = useTranslation()
+
   if (loadingStatus === 'loading') {
     return (
       <div className="h-100 d-flex justify-content-center align-items-center">
@@ -268,7 +268,7 @@ const Main = () => {
       <div className="row h-100 bg-white flex-md-row">
         <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
           <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
-            <b>Каналы</b>
+            <b>{t('channels')}</b>
             <button type="button" className="p-0 text-primary btn btn-group-vertical" onClick={handleShow}>
               <svg
                 viewBox="0 0 16 16"
@@ -331,9 +331,8 @@ const Main = () => {
 
                     resetForm()
                   }
-                  catch (err) {
-                    setErrors({ body: 'Не удалось отправить сообщение' })
-                    console.error('Ошибка отправки:', err)
+                  catch {
+                    setErrors({ body: t('errors.message_not_delivered') })
                   }
                   finally {
                     setSubmitting(false)
@@ -345,8 +344,8 @@ const Main = () => {
                     <div className="input-group has-validation">
                       <Field
                         name="body"
-                        ariaLabel="Новое сообщение"
-                        placeholder="Введите сообщение..."
+                        ariaLabel={t('new_message')}
+                        placeholder={t('message_placeholder')}
                         autoFocus
                         innerRef={inputRef}
                         className={cn('border-0', 'p-0', 'ps-2', 'form-control', { 'is-invalid': errors.body })}
@@ -369,7 +368,7 @@ const Main = () => {
                             d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"
                           />
                         </svg>
-                        <span className="visually-hidden">Отправить</span>
+                        <span className="visually-hidden">{t('buttons.submit')}</span>
                       </Button>
                     </div>
                   </Form>

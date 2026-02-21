@@ -1,4 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import axios from 'axios'
+import routes from '../../constants/routes.js'
 
 const initialUser = {
   token: '',
@@ -9,8 +11,7 @@ const getStoredUser = () => {
     const stored = localStorage.getItem('user')
     return stored ? JSON.parse(stored) : initialUser
   }
-  catch (err) {
-    console.warn('Невалидные данные в localStorage по ключу "user":', err)
+  catch {
     localStorage.removeItem('user')
     return initialUser
   }
@@ -22,6 +23,19 @@ const initialState = {
   token: user.token,
   username: user.username,
 }
+
+export const signup = createAsyncThunk(
+  'auth/signup',
+  async ({ username, password }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(routes.signup(), { username, password })
+      return response.data
+    }
+    catch (error) {
+      return rejectWithValue({ code: error.response.status })
+    }
+  },
+)
 
 const authSlice = createSlice({
   name: 'auth',
