@@ -39,6 +39,7 @@ export default {
   channels: 'Каналы',
   new_message: 'Новое сообщение',
   message_placeholder: 'Введите сообщение...',
+  channel_management: 'Управление каналом',
   channel: {
     created: 'Канал создан',
     renamed: 'Канал переименован',

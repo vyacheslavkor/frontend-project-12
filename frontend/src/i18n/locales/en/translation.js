@@ -39,6 +39,7 @@ export default {
   channels: 'Channels',
   new_message: 'New message',
   message_placeholder: 'Type a message...',
+  channel_management: 'Channel Management',
   channel: {
     created: 'Channel created',
     renamed: 'Channel renamed',

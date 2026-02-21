@@ -20,6 +20,7 @@ import { Button, ButtonGroup, Dropdown } from 'react-bootstrap'
 import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import filter from 'leo-profanity'
 
 const Channel = (props) => {
   const { channel, isActive } = props
@@ -72,12 +73,16 @@ const ChannelFormModal = (props) => {
         <Formik
           initialValues={{ name }}
           onSubmit={async ({ name }, { setSubmitting, resetForm }) => {
+            const filteredName = ['en', 'ru'].reduce((name, lang) => {
+              filter.loadDictionary(lang)
+              return filter.clean(name)
+            }, name)
             if (channelId) {
-              await dispatch(updateChannel({ id: channelId, name }))
+              await dispatch(updateChannel({ id: channelId, name: filteredName }))
               toast.success(t('channel.renamed'))
             }
             else {
-              await dispatch(createChannel({ name }))
+              await dispatch(createChannel({ name: filteredName }))
               toast.success(t('channel.created'))
             }
             handleClose()
@@ -160,7 +165,9 @@ const RemovableChannelButton = (props) => {
         {channel.name}
       </Button>
 
-      <Dropdown.Toggle split variant={isActive ? 'secondary' : null} id="dropdown-split-basic" />
+      <Dropdown.Toggle split variant={isActive ? 'secondary' : null} id="dropdown-split-basic">
+        <span className={cn('visually-hidden')}>{t('channel_management')}</span>
+      </Dropdown.Toggle>
 
       <Dropdown.Menu>
         <Dropdown.Item onClick={handleRemoveShow}>{t('buttons.delete')}</Dropdown.Item>
@@ -326,9 +333,14 @@ const Main = () => {
                     return
                   }
 
+                  const filteredBody = ['en', 'ru'].reduce((body, lang) => {
+                    filter.loadDictionary(lang)
+                    return filter.clean(body)
+                  }, trimmedBody)
+
                   try {
                     await dispatch(postMessage({
-                      body: trimmedBody,
+                      body: filteredBody,
                       username,
                       channelId: currentChannel.id,
                     }))
