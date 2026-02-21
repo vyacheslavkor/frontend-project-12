@@ -19,6 +19,7 @@ import Modal from 'react-bootstrap/Modal'
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap'
 import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
 const Channel = (props) => {
   const { channel, isActive } = props
@@ -73,9 +74,11 @@ const ChannelFormModal = (props) => {
           onSubmit={async ({ name }, { setSubmitting, resetForm }) => {
             if (channelId) {
               await dispatch(updateChannel({ id: channelId, name }))
+              toast.success(t('channel.renamed'))
             }
             else {
               await dispatch(createChannel({ name }))
+              toast.success(t('channel.created'))
             }
             handleClose()
             resetForm()
@@ -140,6 +143,7 @@ const RemovableChannelButton = (props) => {
   const handleRemove = async () => {
     await dispatch(removeChannel(channel.id))
     handleRemoveClose()
+    toast.success(t('channel.removed'))
   }
 
   return (

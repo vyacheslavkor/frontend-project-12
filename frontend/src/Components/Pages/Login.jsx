@@ -2,17 +2,16 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import avatar from '../../assets/avatar.jpg'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
-import axios from 'axios'
-import routes from '../../constants/routes.js'
-import { setCredentials } from '../../features/auth/authSlice.js'
+import { login, setCredentials } from '../../features/auth/authSlice.js'
 import cn from 'classnames'
 import { Button } from 'react-bootstrap'
-import { useTransition } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
 const Login = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { t } = useTransition()
+  const { t } = useTranslation()
 
   return (
     <div className="container-fluid h-100">
@@ -29,29 +28,28 @@ const Login = () => {
               </div>
               <Formik
                 initialValues={{ username: '', password: '' }}
-                onSubmit={(values, { setSubmitting, setErrors }) => {
+                onSubmit={async (values, { setSubmitting, setErrors }) => {
                   setSubmitting(true)
                   const { username, password } = values
 
-                  const tryLogin = async () => {
-                    try {
-                      const response = await axios.post(routes.login(), {
-                        username, password,
-                      })
+                  try {
+                    const response = await dispatch(login({ username, password })).unwrap()
 
-                      dispatch(setCredentials({ token: response.data.token, username: response.data.username }))
-
-                      navigate('/')
+                    dispatch(setCredentials({ token: response.token, username: response.username }))
+                    navigate('/')
+                  }
+                  catch (error) {
+                    if (error.code === 'ERR_NETWORK') {
+                      toast.error(t('errors.network'))
+                      setErrors({ network: 'ERR_NETWORK' })
                     }
-                    catch {
+                    else {
                       setErrors({ password: t('errors.wrong_username_or_password') })
                     }
-                    finally {
-                      setSubmitting(false)
-                    }
                   }
-
-                  tryLogin()
+                  finally {
+                    setSubmitting(false)
+                  }
                 }}
               >
                 {({ isSubmitting, errors }) => (

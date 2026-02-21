@@ -7,6 +7,7 @@ import cn from 'classnames'
 import { Button } from 'react-bootstrap'
 import { setCredentials, signup } from '../../features/auth/authSlice.js'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
 const Signup = () => {
   const { t } = useTranslation()
@@ -60,7 +61,11 @@ const Signup = () => {
                     navigate('/')
                   }
                   catch (error) {
-                    if (error.code === 409) {
+                    if (error.code === 'ERR_NETWORK') {
+                      toast.error('Ошибка соединения')
+                      setErrors({ network: 'ERR_NETWORK' })
+                    }
+                    else if (error.code === 'ERR_BAD_REQUEST') {
                       setErrors({ confirmPassword: t('errors.username_conflict') })
                     }
                     else {

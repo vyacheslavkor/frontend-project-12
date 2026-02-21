@@ -23,6 +23,7 @@ export default {
     username_conflict: 'This user already exists',
     channel_unique: 'Must be unique',
     message_not_delivered: 'Failed to send message',
+    network: 'Network error',
   },
   fields: {
     password: 'Password',
@@ -38,4 +39,9 @@ export default {
   channels: 'Channels',
   new_message: 'New message',
   message_placeholder: 'Type a message...',
+  channel: {
+    created: 'Channel created',
+    renamed: 'Channel renamed',
+    removed: 'Channel removed',
+  },
 }

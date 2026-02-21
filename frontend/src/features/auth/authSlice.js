@@ -26,14 +26,20 @@ const initialState = {
 
 export const signup = createAsyncThunk(
   'auth/signup',
-  async ({ username, password }, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(routes.signup(), { username, password })
-      return response.data
-    }
-    catch (error) {
-      return rejectWithValue({ code: error.response.status })
-    }
+  async ({ username, password }) => {
+    const response = await axios.post(routes.signup(), { username, password })
+    return response.data
+  },
+)
+
+export const login = createAsyncThunk(
+  'auth/login',
+  async ({ username, password }) => {
+    const response = await axios.post(routes.login(), {
+      username, password,
+    })
+
+    return response.data
   },
 )
 

@@ -23,6 +23,7 @@ export default {
     username_conflict: 'Такой пользователь уже существует',
     channel_unique: 'Должно быть уникальным',
     message_not_delivered: 'Не удалось отправить сообщение',
+    network: 'Ошибка соединения',
   },
   fields: {
     password: 'Пароль',
@@ -38,4 +39,9 @@ export default {
   channels: 'Каналы',
   new_message: 'Новое сообщение',
   message_placeholder: 'Введите сообщение...',
+  channel: {
+    created: 'Канал создан',
+    renamed: 'Канал переименован',
+    removed: 'Канал удалён',
+  },
 }
