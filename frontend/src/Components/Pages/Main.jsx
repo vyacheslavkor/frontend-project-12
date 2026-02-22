@@ -103,7 +103,7 @@ const ChannelFormModal = (props) => {
               <Form>
                 <div>
                   <Field name="name" className={inputClasses} id="name" autoFocus />
-                  <label htmlFor="name" className="visually-hidden"></label>
+                  <label htmlFor="name" className="visually-hidden">{t('channel_name')}</label>
                   <ErrorMessage
                     component="div"
                     name="name"

@@ -45,4 +45,5 @@ export default {
     renamed: 'Channel renamed',
     removed: 'Channel removed',
   },
+  channel_name: 'Channel name',
 }

@@ -45,4 +45,5 @@ export default {
     renamed: 'Канал переименован',
     removed: 'Канал удалён',
   },
+  channel_name: 'Имя канала',
 }
