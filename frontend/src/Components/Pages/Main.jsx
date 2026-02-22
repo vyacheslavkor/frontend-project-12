@@ -309,7 +309,7 @@ const Main = () => {
           </div>
           <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
             {channels.map((channel) => {
-              return <Channel channel={channel} isActive={currentChannel.id === channel.id} />
+              return <Channel channel={channel} isActive={currentChannel.id === channel.id} key={channel.id} />
             })}
           </ul>
         </div>
@@ -321,7 +321,7 @@ const Main = () => {
             <div id="messages-box" className="chat-messages overflow-auto px-5">
               {channelMessages.map((message) => {
                 return (
-                  <div className="text-break mb-2">
+                  <div className="text-break mb-2" key={message.id}>
                     <b>{message.username}</b>
                     {': '}
                     {message.body}
