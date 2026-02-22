@@ -222,7 +222,7 @@ const Main = () => {
   const socketRef = useRef(null)
 
   useEffect(() => {
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://0.0.0.0:5001'
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001'
     if (!socketRef.current) {
       socketRef.current = io(socketUrl)
     }
