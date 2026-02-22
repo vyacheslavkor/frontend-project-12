@@ -222,8 +222,9 @@ const Main = () => {
   const socketRef = useRef(null)
 
   useEffect(() => {
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://0.0.0.0:5001'
     if (!socketRef.current) {
-      socketRef.current = io('http://0.0.0.0:5001')
+      socketRef.current = io(socketUrl)
     }
 
     const socket = socketRef.current
@@ -231,31 +232,37 @@ const Main = () => {
       socket.connect()
     }
 
-    socket.on('newMessage', (newMessage) => {
-      dispatch(addMessage(newMessage))
-    })
+    const socketListenersMap = {
+      newMessage: (newMessage) => {
+        dispatch(addMessage(newMessage))
+      },
+      newChannel: (newChannel) => {
+        dispatch(addChannel(newChannel))
+      },
+      removeChannel: (channel) => {
+        if (currentChannelId === channel.id) {
+          dispatch(changeToDefault())
+        }
+        dispatch(deleteChannel(channel.id))
+      },
+      renameChannel: (channel) => {
+        const { id, name } = channel
+        dispatch(changeChannel({ id, changes: { name } }))
+      },
+    }
 
-    socket.on('newChannel', (newChannel) => {
-      dispatch(addChannel(newChannel))
-    })
-
-    socket.on('removeChannel', (channel) => {
-      if (currentChannelId === channel.id) {
-        dispatch(changeToDefault())
+    for (const [listener, callback] of Object.entries(socketListenersMap)) {
+      if (!socket.hasListeners(listener)) {
+        socket.on(listener, callback)
       }
-      dispatch(deleteChannel(channel.id))
-    })
-
-    socket.on('renameChannel', (channel) => {
-      const { id, name } = channel
-      dispatch(changeChannel({ id, changes: { name } }))
-    })
+    }
 
     return () => {
-      socket.off('newMessage')
-      socket.off('newChannel')
-      socket.off('removeChannel')
-      socket.off('renameChannel')
+      for (const listener of Object.keys(socketListenersMap)) {
+        socket.off(listener)
+      }
+
+      socket.disconnect()
     }
   }, [token, dispatch, currentChannelId])
 
