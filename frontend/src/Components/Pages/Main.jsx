@@ -367,7 +367,7 @@ const Main = () => {
                     <div className="input-group has-validation">
                       <Field
                         name="body"
-                        ariaLabel={t('new_message')}
+                        aria-label={t('new_message')}
                         placeholder={t('message_placeholder')}
                         autoFocus
                         innerRef={inputRef}
